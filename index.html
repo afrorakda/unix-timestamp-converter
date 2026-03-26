@@ -54,7 +54,6 @@
             font-weight: 400;
         }
 
-        /* 【重要】2枚目の写真（6:07）の濃度を出すための強制設定 */
         textarea {
             width: 100%; height: 130px; padding: 20px;
             border: none;
@@ -63,15 +62,15 @@
             font-family: monospace; font-size: 14px; 
             font-weight: 700;
             outline: none; margin-bottom: 25px; margin-top: 10px;
-            /* ここを強制的に黒固定します */
             color: #333 !important;
             -webkit-text-fill-color: #333 !important;
             opacity: 1 !important;
         }
+        /* 【修正】リザルト窓の透かしを濃く太くしました */
         textarea::placeholder {
             color: #aaa !important;
             -webkit-text-fill-color: #aaa !important;
-            font-weight: 400;
+            font-weight: 700;
         }
 
         .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
