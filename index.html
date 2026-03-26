@@ -48,14 +48,13 @@
             -webkit-appearance: none;
             -webkit-text-fill-color: var(--main);
         }
-        /* 透かし：#aaa */
         input::placeholder {
             color: #aaa !important;
             -webkit-text-fill-color: #aaa !important;
             font-weight: 400;
         }
 
-        /* 結果窓：不透明度を 1 に固定（修正箇所） */
+        /* 2枚目の写真の濃度を再現。不透明度を100%にし、#333を強制適用 */
         textarea {
             width: 100%; height: 130px; padding: 20px;
             border: none;
@@ -64,11 +63,10 @@
             font-family: monospace; font-size: 14px; 
             font-weight: 700;
             outline: none; margin-bottom: 25px; margin-top: 10px;
-            color: var(--main) !important;
-            -webkit-text-fill-color: var(--main) !important;
-            opacity: 1 !important; /* 透明度を100%に強制固定 */
+            color: #333 !important; /* パキッとした黒 */
+            -webkit-text-fill-color: #333 !important;
+            opacity: 1 !important; /* 完全に不透明 */
         }
-        /* 結果窓の透かし：#aaa */
         textarea::placeholder {
             color: #aaa !important;
             -webkit-text-fill-color: #aaa !important;
