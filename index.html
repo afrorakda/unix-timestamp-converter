@@ -10,7 +10,6 @@
             --bg: #fff;
             --main: #333;
             --accent: #eee;
-            --input-bg: #fff;
             --radius: 15px;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -49,27 +48,26 @@
             -webkit-appearance: none;
             -webkit-text-fill-color: var(--main);
         }
-        
-        /* 【修正】透かし（Placeholder）の色を濃く（#aaa）しました */
+        /* 透かし（Placeholder）の色を指示通り #aaa に濃く設定 */
         input::placeholder {
             color: #aaa !important;
             -webkit-text-fill-color: #aaa !important;
             font-weight: 400;
         }
 
+        /* 【復旧】リザルト窓：文字色を #333、太字を 700 に固定 */
         textarea {
             width: 100%; height: 130px; padding: 20px;
             border: none;
             border-radius: var(--radius);
             background: #fafafa;
-            font-family: monospace; font-size: 14px; font-weight: 700;
+            font-family: monospace; font-size: 14px; 
+            font-weight: 700; /* 太字 */
             outline: none; margin-bottom: 25px; margin-top: 10px;
-            color: var(--main) !important;
-            -webkit-text-fill-color: var(--main);
-            /* iPhone視認性プロトコル */
+            color: var(--main) !important; /* 濃い黒 #333 */
+            -webkit-text-fill-color: var(--main) !important;
             opacity: 1 !important;
         }
-        /* 【修正】結果窓の透かしも同様に濃く */
         textarea::placeholder {
             color: #aaa !important;
             -webkit-text-fill-color: #aaa !important;
