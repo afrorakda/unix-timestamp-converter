@@ -33,7 +33,7 @@
         
         .label-group { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 800; color: #999; margin-bottom: 8px; text-transform: uppercase; }
 
-        /* iPhone視認性プロトコル適用 */
+        /* iPhone視認性プロトコル + 入力文字の強調 */
         input, textarea {
             width: 100%;
             padding: 20px;
@@ -50,6 +50,14 @@
             -webkit-appearance: none;
             -webkit-text-fill-color: var(--main);
         }
+        
+        /* プレースホルダーを薄くし「入力待ち」を演出 */
+        input::placeholder, textarea::placeholder {
+            color: #ddd !important;
+            -webkit-text-fill-color: #ddd !important;
+            font-weight: 400;
+        }
+
         textarea { height: 120px; font-size: 14px; margin-top: 15px; }
 
         .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
@@ -89,7 +97,7 @@
             cursor: pointer;
         }
 
-        /* Modal */
+        /* Modal & Toast */
         .modal {
             display: none;
             position: fixed;
@@ -119,6 +127,7 @@
             font-size: 0.8rem;
             font-weight: 700;
             display: none;
+            z-index: 2000;
         }
 
         .legal { font-size: 10px; color: #ccc; line-height: 1.6; margin-top: 20px; }
@@ -131,7 +140,7 @@
     <p class="subtitle">Convert Unix time to readable date.</p>
 
     <div class="label-group"><span>Unix Timestamp (seconds)</span></div>
-    <input type="number" id="timestampInput" placeholder="e.g. 1740000000" oninput="convert()">
+    <input type="number" id="timestampInput" placeholder="e.g. 1743050000" oninput="convert()">
 
     <div class="btn-group">
         <button class="btn btn-sub" onclick="setNow()">Set Current</button>
