@@ -30,8 +30,12 @@
             background: var(--accent); padding: 8px 14px; border-radius: 12px;
         }
         .subtitle { font-size: 0.85rem; color: #999; font-weight: 700; margin-bottom: 25px; }
-        .label-group { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 800; color: #bbb; margin-bottom: 8px; text-transform: uppercase; }
+        .label-group { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; font-weight: 800; color: #bbb; margin-bottom: 8px; text-transform: uppercase; }
         
+        /* Badge style */
+        .unit-badge { font-size: 0.6rem; background: var(--main); color: #fff; padding: 2px 8px; border-radius: 10px; opacity: 0; transition: 0.2s; }
+        .unit-badge.show { opacity: 1; }
+
         input {
             width: 100%; padding: 18px; border-radius: var(--radius);
             border: 2px solid var(--accent); background: var(--input-bg);
@@ -40,7 +44,6 @@
             opacity: 1 !important; margin-bottom: 15px;
         }
         input::placeholder { color: #ccc; -webkit-text-fill-color: #ccc; font-weight: 700; }
-        /* 日付入力用のスタイル調整 */
         input[type="datetime-local"] { font-family: inherit; font-size: 1rem; }
 
         .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
@@ -92,10 +95,13 @@
     </header>
     <p class="subtitle">2-way converter for Epoch time.</p>
 
-    <div class="label-group"><span>Unix Timestamp (sec/ms)</span></div>
-    <input type="number" id="tsIn" placeholder="Enter Timestamp" oninput="fromTs()">
+    <div class="label-group">
+        <span>Timestamp</span>
+        <span id="unitBadge" class="unit-badge">SEC</span>
+    </div>
+    <input type="number" id="tsIn" placeholder="Enter Unix Time" oninput="fromTs()">
 
-    <div class="label-group"><span>Readable Date (Manual Pick)</span></div>
+    <div class="label-group"><span>Manual Date Pick</span></div>
     <input type="datetime-local" id="dateIn" oninput="fromDate()">
 
     <div class="btn-group">
@@ -103,7 +109,7 @@
         <button class="btn btn-sub" onclick="location.reload()">Clear All</button>
     </div>
 
-    <div class="label-group"><span>Result</span></div>
+    <div class="label-group"><span>Results</span></div>
     <textarea id="res" readonly placeholder="Calculated data..."></textarea>
 
     <button class="btn btn-main" style="width:100%" onclick="copyRes()">Copy Result</button>
@@ -140,16 +146,25 @@
 
     function fromTs() {
         const val = document.getElementById('tsIn').value;
-        if(!val) return clearOutputs();
+        const badge = document.getElementById('unitBadge');
+        if(!val) { badge.classList.remove('show'); return clearOutputs(); }
+        
         let ts = parseInt(val);
-        // 自動判別: 13桁（ミリ秒）ならそのまま、そうでなければ1000倍してDateオブジェクトへ
-        if (val.length < 13) ts *= 1000;
+        // 自動判別: 13桁（ミリ秒）ならそのまま、そうでなければ1000倍
+        if (val.length >= 13) {
+            badge.textContent = 'MILLISECONDS';
+            badge.classList.add('show');
+        } else {
+            badge.textContent = 'SECONDS';
+            badge.classList.add('show');
+            ts *= 1000;
+        }
         
         const d = new Date(ts);
         if(isNaN(d.getTime())) return document.getElementById('res').value = 'Invalid Timestamp';
         
         updateRes(d);
-        // 日付ピッカーも同期
+        // 日付ピッカー同期
         const localISO = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
         document.getElementById('dateIn').value = localISO;
     }
@@ -159,6 +174,8 @@
         if(!val) return;
         const d = new Date(val);
         document.getElementById('tsIn').value = Math.floor(d.getTime() / 1000);
+        document.getElementById('unitBadge').textContent = 'SECONDS';
+        document.getElementById('unitBadge').classList.add('show');
         updateRes(d);
     }
 
@@ -185,6 +202,17 @@
     }
 
     function toggleModal(s) { document.getElementById('homeModal').style.display = s ? 'flex' : 'none'; }
+
+    async function loadFooter() {
+        try {
+            const response = await fetch('footer.json');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.kofi) document.querySelector('.kofi-btn').textContent = data.kofi.text;
+            }
+        } catch (e) {}
+    }
+    window.onload = loadFooter;
 </script>
 
 </body>
