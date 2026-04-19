@@ -13,6 +13,7 @@
             --accent: #eee;
             --input-bg: #fafafa;
             --radius: 15px;
+            --warning: #f39c12;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body {
@@ -32,9 +33,9 @@
         .subtitle { font-size: 0.85rem; color: #999; font-weight: 700; margin-bottom: 25px; }
         .label-group { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; font-weight: 800; color: #bbb; margin-bottom: 8px; text-transform: uppercase; }
         
-        /* Badge style */
-        .unit-badge { font-size: 0.6rem; background: var(--main); color: #fff; padding: 2px 8px; border-radius: 10px; opacity: 0; transition: 0.2s; }
+        .unit-badge { font-size: 0.6rem; background: var(--main); color: #fff; padding: 2px 8px; border-radius: 10px; opacity: 0; transition: 0.3s; font-weight: 900; }
         .unit-badge.show { opacity: 1; }
+        .unit-badge.ms { background: var(--warning); }
 
         input {
             width: 100%; padding: 18px; border-radius: var(--radius);
@@ -62,7 +63,10 @@
             font-size: 0.85rem; font-weight: 700; resize: none; outline: none;
             color: var(--main) !important; -webkit-text-fill-color: var(--main);
             opacity: 1 !important; margin-bottom: 20px; line-height: 1.5;
+            transition: background-color 0.3s ease;
         }
+        /* コピー時のフラッシュアニメーション */
+        .flash { background-color: #eee !important; }
 
         footer { margin-top: auto; text-align: center; padding-top: 30px; }
         .footer-btns { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
@@ -97,7 +101,7 @@
 
     <div class="label-group">
         <span>Timestamp</span>
-        <span id="unitBadge" class="unit-badge">SEC</span>
+        <span id="unitBadge" class="unit-badge">SECONDS</span>
     </div>
     <input type="number" id="tsIn" placeholder="Enter Unix Time" oninput="fromTs()">
 
@@ -150,12 +154,13 @@
         if(!val) { badge.classList.remove('show'); return clearOutputs(); }
         
         let ts = parseInt(val);
-        // 自動判別: 13桁（ミリ秒）ならそのまま、そうでなければ1000倍
+        // 自動判別: 13桁以上ならミリ秒として警告色を適用
         if (val.length >= 13) {
             badge.textContent = 'MILLISECONDS';
-            badge.classList.add('show');
+            badge.classList.add('show', 'ms');
         } else {
             badge.textContent = 'SECONDS';
+            badge.classList.remove('ms');
             badge.classList.add('show');
             ts *= 1000;
         }
@@ -174,8 +179,10 @@
         if(!val) return;
         const d = new Date(val);
         document.getElementById('tsIn').value = Math.floor(d.getTime() / 1000);
-        document.getElementById('unitBadge').textContent = 'SECONDS';
-        document.getElementById('unitBadge').classList.add('show');
+        const badge = document.getElementById('unitBadge');
+        badge.textContent = 'SECONDS';
+        badge.classList.remove('ms');
+        badge.classList.add('show');
         updateRes(d);
     }
 
@@ -190,14 +197,22 @@
     function clearOutputs() {
         document.getElementById('res').value = '';
         document.getElementById('dateIn').value = '';
+        document.getElementById('unitBadge').classList.remove('show');
     }
 
     function copyRes() {
         const out = document.getElementById('res');
         if(!out.value || out.value === 'Invalid Timestamp') return;
+        
         navigator.clipboard.writeText(out.value).then(() => {
+            // トースト表示
             const t = document.getElementById('toast');
-            t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2000);
+            t.style.display = 'block'; 
+            setTimeout(() => t.style.display = 'none', 2000);
+            
+            // フィードバックフラッシュ
+            out.classList.add('flash');
+            setTimeout(() => out.classList.remove('flash'), 300);
         });
     }
 
